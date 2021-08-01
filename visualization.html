@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+  <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://rawgit.com/susielu/d3-annotation/master/d3-annotation.min.js"></script>
+</head>
+
+  <body>
+
+    <!-- Buttons for updating data -->
+    <button id='b1900', onclick="update(1900)">1900</button>
+    <button id='b1950', onclick="update(1950)">1950</button>
+    <button id='b2018', onclick="update(2018)">2018</button>
+
+    <!-- SVG to be implemented here -->
+    <div id="dataviz"></div>
+
+    <!-- D3 Plots -->
+    <script>
+
+      // Set svg dimensions
+      var margin = {top: 30, right: 30, bottom: 70, left: 60};
+      const width = 1000;
+      const height = 600;
+
+      // Compute plot dimensions
+      var plotWidth = width - margin.left - margin.right;
+      var plotHeight = height - margin.top - margin.bottom;
+
+      // Add svg to body
+      var svg = d3.select("#dataviz")
+                  .append("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .text("hello")
+                  .append("g")
+                    .attr("transform",
+                          "translate(" + margin.left + "," + margin.top + ")");
+
+      // Initialize the X axis
+      var scaleX = d3.scaleBand()
+                     .range([ 0, plotWidth ])
+                     .padding(0.2);
+
+      // Add chart title
+      svg.append("text")
+        .attr("transform",
+              "translate(" + (plotWidth / 2) + " ," +
+                            (0) + ")")
+        .attr('class', 'chart-title')
+        .style("text-anchor", "middle")
+
+      // Add x axis
+      var axisX = svg.append("g")
+                     .attr("transform", "translate(0," + plotHeight + ")")
+                     .attr("class", "xAxis")
+
+      // Add x axis label
+      svg.append("text")
+        .attr("transform",
+              "translate(" + (plotWidth / 2) + " ," +
+                            (plotHeight + margin.top + 20) + ")")
+        .style("text-anchor", "middle")
+        .text("Countries");
+
+      // Initialize the Y axis
+      var scaleY = d3.scaleLinear()
+                     .range([ plotHeight, 0]);
+
+      // Add y axis
+      var axisY = svg.append("g")
+                     .attr("class", "yAxis")
+
+      // Add y axis label
+      svg.append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 0 - margin.left)
+          .attr("x", 0 - (plotHeight / 2))
+          .attr("dy", "1em")
+          .style("text-anchor", "middle")
+          .text("Number of shark attacks");
+
+      // create a tooltip
+      var TooltipSummary = d3.select("body")
+                       .append("div")
+                       .attr('class', 'tooltipsummary')
+                       .attr('width', 300)
+                       .style("opacity", 0)
+                       .text('Data Point Summary')
+                      //  .html('<h4>Data Point Summary</h4>')
+
+      var Tooltip = TooltipSummary
+                       .append("div")
+                       .attr("class", "tooltip")
+                       .style("opacity", 0)
+                       .style("background-color", "white")
+                       .style("border", "solid")
+                       .style("border-width", "2px")
+                       .style("border-radius", "5px")
+                       .style("padding", "5px")
+
+      // Define data
+      var data1 = {}
+
+      data1.annotations = [
+        {
+          note:
+            {
+              title: "USA saw 6 reported attacks in 1900",
+              label: "twice as many attacks as the next nations",
+            },
+          x: plotWidth * .15,
+          y: plotHeight * .01,
+          dx: plotWidth * .20,
+          dy: 0,
+          color: '#Ff5000'
+        },
+        {
+          note:
+            {
+              title: "Other leading nations",
+              label: "saw no attacks this year",
+            },
+          x: plotWidth * .80,
+          y: plotHeight * .80,
+          dx: 0,
+          dy: 0,
+          color: '#4caf50'
+        }
+      ]
+
+      data1.data = [
+        {"group": "AUSTRALIA", "value": 3, "male": 3, "female": 0, "fatal": 1},
+        {"group": "SOUTH AFRICA", "value": 3, "male": 3, "female": 0, "fatal": 1},
+        {"group": "USA", "value": 6, "male": 5, "female": 0, "fatal": 0},
+        {"group": "BRAZIL", "value": 0, "male": 0, "female": 0, "fatal": 0},
+        {"group": "MEXICO", "value": 0, "male": 0, "female": 0, "fatal": 0},
+      ];
+
+      // Year = 1950
+      var data2 = {};
+
+      data2.data = [
+        {"group": "AUSTRALIA", "value": 13, "male": 11, "female": 0, "fatal": 2},
+        {"group": "USA", "value": 9, "male": 9, "female": 0, "fatal": 1},
+        {"group": "SOUTH AFRICA", "value": 5, "male": 5, "female": 0, "fatal": 2},
+        {"group": "BRAZIL", "value": 0, "male": 0, "female": 0, "fatal": 0},
+        {"group": "MEXICO", "value": 0, "male": 0, "female": 0, "fatal": 0},
+      ];
+
+      data2.annotations = [
+        {
+          note:
+            {
+              title: "Aussies overtook the USA in attacks",
+              label: "nearly 4x attacks as the start of the century",
+            },
+          x: plotWidth * .05,
+          y: plotHeight * 0.01,
+          dx: plotWidth * .25,
+          dy: 0,
+          color: '#0040ff'
+        },
+        {
+          note:
+            {
+              title: "Attacks in the USA stay near 1900 levels",
+              label: "over 50 years later, not a substanial increase in attacks",
+            },
+          x: plotWidth * .30,
+          y: plotHeight * .35,
+          dx: plotWidth * .15,
+          dy: -plotHeight * .05,
+          color: '#Ff5000'
+        },
+      ]
+
+      // Year = 2018
+      var data3 = {};
+      data3.data = [
+        {"group": "USA", "value": 10, "male": 8, "female": 2, "fatal": 0},
+        {"group": "AUSTRALIA", "value": 23, "male": 20, "female": 3, "fatal": 0},
+        {"group": "BRAZIL", "value": 5, "male": 4, "female": 1, "fatal": 1},
+        {"group": "SOUTH AFRICA", "value": 4, "male": 4, "female": 0, "fatal": 0},
+        {"group": "MEXICO", "value": 1, "male": 1, "female": 0, "fatal": 0},
+      ];
+
+      data3.annotations = [
+        {
+          note:
+            {
+              title: "Aussies continue their lead in shark attacks",
+              label: "nearly double the attacks seen in 1950",
+            },
+          x: plotWidth * .06,
+          y: plotHeight * 0.01,
+          dx: plotWidth * .20,
+          dy: 0,
+          color: '#0040ff'
+        },
+        {
+          note:
+            {
+              title: "USA stays in second",
+              label: "attacks stay near consistent yet again",
+            },
+          x: plotWidth * .30,
+          y: plotHeight * .60,
+          dx: plotWidth * .05,
+          dy: -plotHeight * .15,
+          color: '#Ff5000'
+        },
+        {
+          note:
+            {
+              title: "More countries rose in shark attacks",
+              label: "South Africa saw reductions while Brazil & Mexico saw increases",
+            },
+          x: plotWidth * .65,
+          y: plotHeight * .55,
+          dx: 0,
+          dy: 0,
+          color: '#00cc66'
+        }
+      ]
+
+      // Update plots with the given key
+      function update(key) {
+
+        var data = null;
+        var annotations = null;
+
+        // Grab the data
+        switch(key){
+          case 1900:
+            obj = data1;
+            break;
+          case 1950:
+            obj = data2;
+            break;
+          case 2018:
+            obj = data3;
+            break;
+          default:
+            key = 1900;
+            obj = data1;
+            break;
+        }
+
+        // Grab children for ease
+        data = obj.data;
+        annotations = obj.annotations;
+
+        // Update chart title
+        d3.selectAll('text.chart-title')
+          .text(`Year: ${key}`);
+
+        // Sort the data
+        data.sort(function(a, b) {
+                  return d3.descending(a.value, b.value)
+                  })
+
+        // Update X axis
+        scaleX.domain(data.map(function(d) { return d.group; }))
+        axisX.call(d3.axisBottom(scaleX))
+
+        // Update Y axis
+        scaleY.domain([0, d3.max(data, function(d) { return d.value }) ]);
+        axisY.transition().duration(1000).call(d3.axisLeft(scaleY));
+
+        // Bind data to rectangles
+        var bars = svg
+                   .selectAll("rect")
+                   .data(data)
+
+        function update_rect_old(){
+
+          bars
+            .enter()
+              .append("rect")   // Add new rect for each new element
+              .attr("class", "data_rect")
+            .merge(bars)         // get existing elements as well
+              .transition()   // apply changes to all of them with a transition
+              .duration(1000)
+              .attr("x", function(d) { return scaleX(d.group); })
+              .attr("y", function(d) { return scaleY(d.value); })
+              .attr("width", scaleX.bandwidth())
+              .attr("height", function(d) { return plotHeight - scaleY(d.value); })
+              .attr("fill", "#2596be")
+
+          // Remove groups not in use
+          bars
+            .exit()
+            .remove()
+
+        }
+
+        function update_rect_new(){
+
+          // Introduce new data elements
+          bars
+            .enter()
+            .append("rect")   // Add new rect for each new element
+              .attr("class", "data_rect")
+              .attr("x", function(d) { return scaleX(d.group); })
+              .attr("y", function(d) { return scaleY(d.value); })
+              .attr("width", scaleX.bandwidth())
+              .attr("height", function(d) { return plotHeight - scaleY(d.value); })
+              .attr("fill", "#0099CC")
+            .merge(bars)
+              .attr("class", "data_rect")
+              .transition(1000)
+              .attr("x", function(d) { return scaleX(d.group); })
+              .attr("y", function(d) { return scaleY(d.value); })
+              .attr("width", scaleX.bandwidth())
+              .attr("height", function(d) { return plotHeight - scaleY(d.value); })
+              .attr("fill", "#0099CC")
+
+          // Remove groups not in data
+          bars
+            .exit()
+            .transition()
+            .duration(500)
+            .attr('height', 0)
+            .remove()
+        }
+
+        update_rect_new();
+
+        // Apply interactivity
+        d3.selectAll('rect.data_rect')
+          .on('mouseenter', function (actual, i) {
+
+            d3.select(this)
+              .attr('opacity', 0.5)
+              .style("stroke", "1")
+              .style("stroke", "black")
+
+            Tooltip
+              .style("opacity", 1)
+
+            TooltipSummary
+              .style("opacity", 1)
+          })
+          .on('mouseleave', function (actual, i) {
+
+            d3.select(this)
+              .attr('opacity', 1)
+              .style("stroke", "none")
+
+            Tooltip
+              .style("opacity", 0)
+
+            TooltipSummary
+              .style("opacity", 0)
+          })
+          .on('mousemove', function (d) {
+
+            var string = `Year: ${key} <br>Country: ${d.group} <br>Attacks on Males: ${d.male} <br>Attacks on Females: ${d.female} <br>Total Attacks: ${d.value} <br>Fatal Attacks: ${d.fatal}`
+
+            Tooltip
+              .style("left", d3.event.pageX - 50 + "px")
+              .style("top", d3.event.pageY - 70 + "px")
+              .html(string)
+          })
+
+        // Clear old annotations
+        d3.selectAll('g.annotation-group').remove()
+
+        // Add annotations
+        if (annotations){
+
+          const makeAnnotations = d3.annotation()
+                                  .type(d3.annotationLabel)
+                                  .annotations(annotations)
+
+          svg
+            .append("g")
+            .attr("class", "annotation-group")
+            .call(makeAnnotations)
+        }
+      }
+
+      // Initialize plot with default
+      update(null)
+
+    </script>
+
+  </body>
+</html>

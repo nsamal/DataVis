@@ -1,0 +1,77 @@
+body {
+  background-color: whitesmoke;
+}
+
+svg {
+  background-color: whitesmoke;
+  font-family: 'Lato';
+}
+
+path.line {
+  stroke: lightgrey;
+}
+
+div.title {
+  font-size: 2em;
+  width: 200px;
+  position: absolute;
+  left: 70px;
+  top: 100px;
+  font-family: "Lato"
+}
+
+.annotation text {
+  font-size: .7em;
+  text-transform: uppercase;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.annotation path.connector {
+  stroke-dasharray: 1, 1;
+}
+
+.annotation-note-title {
+  font-weight: bold;
+}
+
+.annotation-note-label {
+  font-weight: normal;
+}
+
+text.title {
+  font-size: 1.1em;
+}
+
+.lineChart path {
+  fill: none;
+  stroke-width: 2;
+}
+
+path.domain {
+  stroke: lightgrey;
+}
+
+.annotation.axis .annotation-note-bg {
+  fill: white;
+  stroke: white;
+  stroke-width: 10;
+}
+
+.annotation.axis path {
+  stroke: lightgrey;
+}
+
+.annotation.title text {
+  font-size: 2em;
+  font-weight: 100;
+}
+
+.annotation.badge text {
+  font-weight: normal;
+  font-size: 10px;
+}
+
+.tooltipsummary text{
+  font-size: 10px;
+  font-weight: bold;
+}
